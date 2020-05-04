@@ -123,5 +123,47 @@ navbarPage("Italy Covid", id="nav",
                       hr(),
                       DT::dataTableOutput("analysis_table")
                     )
+           ),
+           tabPanel("Coefficient of Reproduction",
+                    sidebarLayout(
+                      sidebarPanel(
+                        p(paste0("Latest estimates of the number of confirmed cases by date of infection, ",
+                                 "the expected change in daily confirmed cases, the effective reproduction ",
+                                 "number, tthe doubling time (when negative this corresponds to the halving time), ",
+                                 "and the adjusted R-squared of the exponential fit. The mean an 90% credible ",
+                                 "interval is shown for any numeric estimate")),
+                        tableOutput("Summary"),
+                        p(strong(paste0("The estimates of the coefficient of reproduction shown here have been done",
+                                        "by the a team based at London School of Hygiene and Tropical Medicine who ",
+                                        "focus on real-time modelling and forecasting of infectious disease outbreaks."))),
+                        p(strong(paste0("All rights are reserved to them who have shared codes, data and result with MIT ",
+                                        "license at "), a("this Github repository", href="https://github.com/epiforecasts"),
+                                 paste0(". Additional methodological info and the estimates for other countries are available",
+                                        "at"), a("this webpage", href="https://epiforecasts.io/")))),
+                      mainPanel(
+                        p(paste0("Note that it takes time for infection to cause symptoms, to get tested for ",
+                                 "SARS-CoV-2 infection, for a positive test to return and ultimately to enter ",
+                                 "the case data presented here. In other words, today's case data are only informative ",
+                                 "of new infections about two weeks ago. This is reflected in the plots below, which ",
+                                 "are by date of infection")),
+                        plotOutput("R0XRegion", height = "1000px"),
+                        p(paste0("Confirmed cases and the time-varying estimate of the ",
+                                 "effective reproduction number (light bar = 90% credible interval; dark bar = the 50% credible interval.). ",
+                                 "Regions are ordered by the number of expected daily confirmed cases and shaded based on the expected change",
+                                 "in daily confirmedcases. The horizontal dotted line indicates the target value of 1 for the effective reproduction ",
+                                 "no. required for control and a single case required for elimination.")),
+                        hr(),
+                        selectInput("region.r0", strong("Analyse the evolution at national or at region level"), 
+                                    c("Italy", 
+                                      setdiff(unique(Data$covid.regions$Region),
+                                              c("Basilicata", "Molise"))),
+                                    multiple=FALSE, selected = "Italy"),
+                        plotly::plotlyOutput("Cases.Graph"),
+                        p(paste0("Confirmed cases by date of report (bars) and their estimated date of infection")),
+                        plotly::plotlyOutput("R0.Graph"),
+                        p(paste0("Time-varying estimate of the effective reproduction number. Light ribbon",
+                                 " = 90% credible interval; dark ribbon = the 50% credible interval. These",
+                                 "should be considered indicative only")))
+                    ) 
            )
 )

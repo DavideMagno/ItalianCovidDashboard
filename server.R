@@ -229,4 +229,28 @@ shinyServer(function(input, output, session) {
                                                             className = 'dt-center',
                                                             targets = "_all"))))
     })
+    
+# R(t) section ------------------------------------------------------------
+    
+    cases.summary <- CasesSummary()
+    
+    plot.r0 <- reactive({
+        PlotR0(input$region.r0)
+    })
+    
+    output$R0XRegion <- renderPlot({
+        cases.summary$plot  
+    })
+    
+    output$R0.Graph <- plotly::renderPlotly({
+        plot.r0()$p.R0
+    })
+    
+    output$Cases.Graph <- plotly::renderPlotly({
+        plot.r0()$p.cases
+    })
+    
+    output$Summary <- renderTable({
+        cases.summary$summary.table
+    })
 })
