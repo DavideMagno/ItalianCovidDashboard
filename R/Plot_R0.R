@@ -35,9 +35,6 @@ PlotConfidenceIntervals <- function(data) {
     dplyr::select(-rt_type)
   
   p <- plotly::plot_ly() %>% 
-    plotly::add_lines(x = data.nowcast$date, y = data.nowcast$point, 
-                      line = list(color = "15C9A9", width = 4), 
-                      name = "Nowcast") %>% 
     plotly::add_ribbons(x = data.nowcast$date, ymin = data.nowcast$lower, 
                         ymax = data.nowcast$upper, color = I("#cbe0dc"), 
                         name = "50% confidence", 
@@ -109,7 +106,7 @@ PlotR0 <- function(region) {
   
   if ("case_forecast" %in% names(rt)) {
     cases.forecast <-  rt$case_forecast %>% 
-      dplyr::mutate(date = date - lubridate::days(5)) %>% 
+      dplyr::mutate(date = date) %>% 
       dplyr::select(date = date, rt_type, lower = bottom, upper = top, mid_lower = lower, 
                     mid_upper = upper, point = mean)
     
@@ -168,7 +165,7 @@ CasesSummary <- function() {
     }
   
   ##join plots together
-  plot <- cases.plot + rt.plot + patchwork::plot_layout(ncol = 1)
+  plot <- ggpubr::ggarrange(cases.plot, rt.plot, ncol = 1, nrow = 2)
   
   summary.table <- paste0("https://github.com/epiforecasts/covid-regional/raw/",
                             "master/italy/regional-summary/summary_table.rds") %>%

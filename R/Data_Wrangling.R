@@ -18,13 +18,14 @@ CalculateItaly <- function(data) {
 }
 
 GetCovidData <- function(url) {
-  data <- readr::read_csv(url(url))
+  data <- readr::read_csv(url(url),
+                          col_types = readr::cols(`People Tested` = readr::col_number()))
   
   if("Tests" %in% colnames(data)) {
     data %<>% 
       FixTAG %>% 
-      dplyr::mutate(Total = rowSums(dplyr::select_if(., is.numeric)),
-                    Total = Total - Tests)
+      dplyr::mutate(Total = rowSums(dplyr::select_if(., is.numeric), na.rm = TRUE),
+                    Total = Total - Tests - rowSums(dplyr::select(., `People Tested`), na.rm = TRUE))
   } else {
     data %<>%
       dplyr::rename("Total" = `Total Positive`)
@@ -83,7 +84,7 @@ GetRawData <- function() {
   covid <- purrr::map(files, ~GetCovidData(paste0(address,
                                                   "Daily_Covis19_Italian_Data_",
                                                   .x)))
-  
+
   covid.region <- WrangleCovidData(covid[[1]], covid[[2]], "Region")
   
   covid.province <- WrangleCovidData(covid[[3]], covid[[4]], 

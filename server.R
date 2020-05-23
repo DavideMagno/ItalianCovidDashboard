@@ -161,7 +161,7 @@ shinyServer(function(input, output, session) {
         fields <- if (is.null(input$provinces)) {
             c("Hospitalised", 
               "In ICU", "Home Isolation", "Dead", 
-              "Healed", "Total", "Tests")
+              "Healed", "Total", "Tests", "People Tested")
         } else {
             c("Total")
         }
