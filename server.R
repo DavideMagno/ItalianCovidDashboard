@@ -145,7 +145,8 @@ shinyServer(function(input, output, session) {
             dplyr::filter(Data$covid.province, Region %in% input$regions) %>%
                 `$`('Province') %>%
                 unique() %>%
-                sort()
+                sort() %>% 
+                {.[!stringr::str_detect(.,"In fase|Fuori")]}
         }
         stillSelected <- isolate(input$provinces[input$provinces %in% provinces])
         updateSelectizeInput(session, "provinces", choices = provinces,
